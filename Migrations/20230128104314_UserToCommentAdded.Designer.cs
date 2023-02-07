@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyBoards.Entities;
 
@@ -11,9 +12,11 @@ using MyBoards.Entities;
 namespace MyBoards.Migrations
 {
     [DbContext(typeof(MyBoardsContext))]
-    partial class MyBoardsContextModelSnapshot : ModelSnapshot
+    [Migration("20230128104314_UserToCommentAdded")]
+    partial class UserToCommentAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -94,39 +97,15 @@ namespace MyBoards.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Categoty")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Tags");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Value = "Web"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Value = "UI"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Value = "Desktop"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Value = "API"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Value = "Service"
-                        });
                 });
 
             modelBuilder.Entity("MyBoards.Entities.User", b =>
@@ -205,23 +184,6 @@ namespace MyBoards.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("WorkItemStates");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            State = "To Do"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            State = "Doing"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            State = "Done"
-                        });
                 });
 
             modelBuilder.Entity("MyBoards.Entities.WorkItemTag", b =>
@@ -276,7 +238,7 @@ namespace MyBoards.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<decimal>("RemaningWork")
+                    b.Property<decimal>("RemainingWork")
                         .HasPrecision(14, 2)
                         .HasColumnType("decimal(14,2)");
 

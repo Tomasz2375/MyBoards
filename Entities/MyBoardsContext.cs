@@ -4,6 +4,10 @@ namespace MyBoards.Entities
 {
     public class MyBoardsContext : DbContext
     {
+        public MyBoardsContext()
+        {
+        }
+
         public MyBoardsContext(DbContextOptions<MyBoardsContext> options) : base(options)
         {
 
@@ -17,6 +21,7 @@ namespace MyBoards.Entities
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<WorkItemState> WorkItemStates { get; set; }
+        public DbSet<WorkItemTag> WorkItemTag { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,7 +40,7 @@ namespace MyBoards.Entities
                 .HasMaxLength(200);
 
             modelBuilder.Entity<Task>()
-                .Property(wi => wi.RemainingWork)
+                .Property(wi => wi.RemaningWork)
                 .HasPrecision(14, 2);
 
             modelBuilder.Entity<Issue>()
@@ -82,12 +87,30 @@ namespace MyBoards.Entities
             {
                 eb.Property(x => x.CreatedDate).HasDefaultValueSql("getutcdate()");
                 eb.Property(x => x.UpdatedDate).ValueGeneratedOnUpdate();
+                eb.HasOne(c => c.Author)
+                .WithMany(a => a.Comments)
+                .HasForeignKey(c => c.AuthorId)
+                .OnDelete(DeleteBehavior.ClientCascade);
             });
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Address)
                 .WithOne(a => a.User)
                 .HasForeignKey<Address>(a => a.UserId);
 
+            modelBuilder.Entity<WorkItemState>()
+                .HasData(
+                new WorkItemState() { Id = 1, State = "To Do" },
+                new WorkItemState() { Id = 2, State = "Doing" },
+                new WorkItemState() { Id = 3, State = "Done" });
+
+            modelBuilder.Entity<Tag>()
+                .HasData(
+                new Tag() { Id = 1, Value = "Web"},
+                new Tag() { Id = 2, Value = "UI"},
+                new Tag() { Id = 3, Value = "Desktop"},
+                new Tag() { Id = 4, Value = "API" },
+                new Tag() { Id = 5, Value = "Service" });
+          
         }
 
     }
