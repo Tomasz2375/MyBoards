@@ -74,7 +74,6 @@ namespace MyBoards
                 .AsNoTracking()
                 .ToList();
 
-                var entries1 = db.ChangeTracker.Entries();
 
                 db.SaveChanges();
 
