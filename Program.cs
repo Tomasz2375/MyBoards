@@ -20,9 +20,9 @@ namespace MyBoards
                 options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
             builder.Services.AddDbContext<MyBoardsContext>(
-                option => option.UseSqlServer
-                (
-                    builder.Configuration.GetConnectionString("MyBoardsConnectionString"))
+                option => option
+                //.UseLazyLoadingProxies()
+                .UseSqlServer(builder.Configuration.GetConnectionString("MyBoardsConnectionString"))
                 );
 
 
@@ -70,14 +70,17 @@ namespace MyBoards
             }
             app.MapGet("data", async (MyBoardsContext db) =>
             {
-                var states = db.WorkItemStates
-                .AsNoTracking()
-                .ToList();
+                var withAddresses = true;
 
+                var user = db.Users       
+                .First(u => u.Id == Guid.Parse("EBFBD70D-AC83-4D08-CBC6-08DA10AB0E61"));
 
-                db.SaveChanges();
-
-                return states;
+                if (withAddresses)
+                {
+                    var result = new { FullName = user.FullName, Address = $"{user.Address.Street} {user.Address.City}" };
+                    return result;
+                }
+                return new {FullName = user.FullName, Address = "-"};
             });
 
             app.MapPost("update", async (MyBoardsContext db) =>
